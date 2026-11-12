@@ -1,6 +1,12 @@
 # dsh-macos-notify
 
+[![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![platform: macOS 13+](https://img.shields.io/badge/platform-macOS%2013%2B-black.svg)]()
+[![DeepSeek Harness 0.2.x](https://img.shields.io/badge/DeepSeek%20Harness-0.2.x-4b6bfb.svg)]()
+
 Native macOS notifications for [DeepSeek Harness](https://github.com/deepseek-ai) (DSH) — the kind you get from any other app, with the DeepSeek Harness icon: get notified when the agent **needs your approval**, **finishes a turn**, **hits an error**, or **waits for your answer**.
+
+> **Install:** `git clone https://github.com/Justinis997/dsh-macos-notify.git`, then tell DSH *"install the DSH bundle at `<path>`"*. Details in [Install](#install).
 
 ![Settings panel](docs/settings-panel.webp)
 
