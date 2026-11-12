@@ -1,0 +1,12 @@
+- insert:
+    - id: macos-notify
+      name: dsh-macos-notify
+      config:
+        approval: true
+        turnComplete: true
+        error: true
+        questions: true
+        subagentSessions: false
+        skipWhenFocused: true
+        sound: Glass
+        activateOnClick: true

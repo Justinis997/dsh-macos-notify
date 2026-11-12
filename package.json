@@ -1,0 +1,53 @@
+{
+  "name": "dsh-macos-notify",
+  "version": "0.2.0",
+  "description": "Native macOS notifications when DeepSeek Harness needs approval, finishes a turn, or hits an error.",
+  "type": "module",
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "cordis.patch.yml",
+    "locale/*.json",
+    "icon.svg",
+    "helper/DSHNotify.app/**",
+    "helper/DSHNotify.swift",
+    "README.md",
+    "LICENSE",
+    "docs/*.webp"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-settings"
+      ]
+    }
+  },
+  "license": "MIT",
+  "author": "justin",
+  "keywords": [
+    "deepseek",
+    "deepseek-harness",
+    "dsh",
+    "dsh-plugin",
+    "notifications",
+    "macos",
+    "usernotifications"
+  ],
+  "os": [
+    "darwin"
+  ],
+  "engines": {
+    "node": ">=22"
+  }
+}

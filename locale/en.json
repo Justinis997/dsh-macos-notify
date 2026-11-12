@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "macOS notifications",
+    "description": "Native macOS notifications when the harness needs an approval, finishes a turn, or hits an error."
+  }
+}
