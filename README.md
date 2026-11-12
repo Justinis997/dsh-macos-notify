@@ -71,7 +71,7 @@ Open `Settings › macOS 系统通知`. Every switch applies immediately and is 
 | `questions` | `true` | Notify when the agent waits for your answer |
 | `subagentSessions` | `false` | Also notify for subagent / workflow sessions |
 | `skipWhenFocused` | `true` | Stay quiet while DSH is frontmost |
-| `sound` | `"Glass"` | System sound name (empty = silent) |
+| `sound` | `"default"` | Play the macOS default notification sound (empty = silent) |
 | `activateOnClick` | `true` | Bring DSH forward when a notification is clicked |
 
 ## How it works
@@ -112,6 +112,7 @@ sleep 2 | ./DSHNotify.app/Contents/MacOS/DSHNotify --probe
 ## Known limitations
 
 - **Notification icons are cached per bundle id.** If a bundle ever delivered a notification *before* it had an icon, that id keeps a blank icon forever — restarting the notification daemon, `lsregister -f`, and version bumps do not help. Only a fresh bundle id (`com.deepseek.dsh.notifier`) fixes it.
+- **Named system sounds do not work through `UNUserNotificationCenter`.** `UNNotificationSound(named:)` only resolves files inside the app bundle or `~/Library/Sounds`, so `"Glass"` / `"Ping"` silently played nothing; this plugin therefore plays the macOS default notification sound.
 - **macOS fixes the notification layout** into title / subtitle / body with fixed font sizes. A larger, two-line middle section is not possible; `attributedBody` exists only on iOS.
 - **No auto-generated settings page.** DSH 0.2.x does not project a plugin's `Config` schema into the UI by itself; this plugin ships a client page (`client.js`) for that. Fields must also be marked `volatile`, otherwise the settings service ignores them.
 

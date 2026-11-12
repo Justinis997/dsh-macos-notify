@@ -14,7 +14,7 @@ const DEFAULTS = {
   questions: true,
   subagentSessions: false,
   skipWhenFocused: true,
-  sound: 'Glass',
+  sound: 'default',
   activateOnClick: true,
 }
 
@@ -30,7 +30,7 @@ export const Config = z.object({
   questions: live(z.boolean().default(true).description('我提问、需要你回答时通知')),
   subagentSessions: live(z.boolean().default(false).description('子代理 / workflow 内部会话也通知')),
   skipWhenFocused: live(z.boolean().default(true).description('DSH 窗口在前台时不弹')),
-  sound: live(z.string().default('Glass').description('系统提示音名，留空则静音')),
+  sound: live(z.string().default('default').description('播放系统默认提示音；留空则静音')),
   activateOnClick: live(z.boolean().default(true).description('点通知时激活 DSH 窗口')),
 })
 
@@ -89,7 +89,10 @@ function applyInner(ctx, config = {}) {
   const osaNotify = (payload) => {
     const parts = [`display notification ${appleScriptString(payload.body)} with title ${appleScriptString(payload.title)}`]
     if (payload.subtitle) parts.push(`subtitle ${appleScriptString(payload.subtitle)}`)
-    if (payload.sound) parts.push(`sound name ${appleScriptString(payload.sound)}`)
+    // The osascript fallback does resolve system sound names, so "default"
+    // maps to one of them instead of the literal word.
+    const fallbackSound = !payload.sound ? '' : String(payload.sound).trim().toLowerCase() === 'default' ? 'Glass' : payload.sound
+    if (fallbackSound) parts.push(`sound name ${appleScriptString(fallbackSound)}`)
     try {
       execFile('/usr/bin/osascript', ['-e', parts.join(' ')], () => {})
     } catch {

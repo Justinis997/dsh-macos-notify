@@ -96,8 +96,13 @@ func deliver(_ json: [String: Any]) {
     content.title = json["title"] as? String ?? "DeepSeek Harness"
     if let subtitle = json["subtitle"] as? String, !subtitle.isEmpty { content.subtitle = subtitle }
     content.body = json["body"] as? String ?? ""
-    if let sound = json["sound"] as? String, !sound.isEmpty {
-        content.sound = UNNotificationSound(named: UNNotificationSoundName(sound))
+    // `UNNotificationSound(named:)` only resolves files inside the app bundle or
+    // ~/Library/Sounds — system sound names such as "Glass" or "Ping" silently
+    // produce no sound. Any non-empty value therefore means "the system default
+    // notification sound"; an empty value means silent.
+    let soundName = (json["sound"] as? String ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+    if !soundName.isEmpty, soundName.lowercased() != "none" {
+        content.sound = .default
     }
     var info: [String: Any] = [:]
     if let bundleId = json["activateBundleId"] as? String { info["activateBundleId"] = bundleId }
@@ -133,7 +138,8 @@ func handle(line: Data) {
         center.getNotificationSettings { settings in
             center.getDeliveredNotifications { delivered in
                 emit(["ok": true, "status": settings.authorizationStatus.rawValue,
-                      "delivered": delivered.count])
+                      "delivered": delivered.count, "soundSetting": settings.soundSetting.rawValue,
+                      "alertSetting": settings.alertSetting.rawValue])
             }
         }
         return
@@ -188,7 +194,8 @@ if let bodyIndex = CommandLine.arguments.firstIndex(of: "--body") {
 if CommandLine.arguments.contains("--probe") {
     center.getNotificationSettings { settings in
         center.getDeliveredNotifications { delivered in
-            emit(["ok": true, "status": settings.authorizationStatus.rawValue, "delivered": delivered.count])
+            emit(["ok": true, "status": settings.authorizationStatus.rawValue, "delivered": delivered.count,
+                  "soundSetting": settings.soundSetting.rawValue, "alertSetting": settings.alertSetting.rawValue])
             exit(0)
         }
     }

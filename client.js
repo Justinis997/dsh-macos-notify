@@ -12,7 +12,7 @@ window.__ModuleLoader__.load({
       { key: 'questions', type: 'boolean', zh: '提问时通知', en: 'Notify on questions', zhHint: '等待你回答问题或选项时弹', enHint: 'When the agent waits for your answer' },
       { key: 'subagentSessions', type: 'boolean', zh: '子代理也通知', en: 'Include subagents', zhHint: '开启后子代理 / workflow 内部会话结束也会弹，长任务容易被刷屏', enHint: 'Also notify for subagent and workflow sessions' },
       { key: 'skipWhenFocused', type: 'boolean', zh: '前台不打扰', en: 'Quiet while DSH is frontmost', zhHint: 'DSH 窗口在前台时不弹通知', enHint: 'Skip notifications while DeepSeek Harness is the frontmost app' },
-      { key: 'sound', type: 'string', zh: '提示音', en: 'Sound', zhHint: '系统音效名，例如 Glass / Ping / Hero，留空静音', enHint: 'System sound name (Glass, Ping, Hero…). Empty mutes it' },
+      { key: 'sound', type: 'sound', zh: '提示音', en: 'Play a sound', zhHint: '播放 macOS 系统默认通知音；关掉即静音', enHint: 'Play the macOS default notification sound; off is silent' },
       { key: 'activateOnClick', type: 'boolean', zh: '点击激活窗口', en: 'Activate on click', zhHint: '点通知时把 DeepSeek Harness 切到前台', enHint: 'Bring DeepSeek Harness forward when a notification is clicked' },
     ]
 
@@ -23,7 +23,7 @@ window.__ModuleLoader__.load({
       questions: true,
       subagentSessions: false,
       skipWhenFocused: true,
-      sound: 'Glass',
+      sound: 'default',
       activateOnClick: true,
     }
 
@@ -168,12 +168,13 @@ window.__ModuleLoader__.load({
             body.push(h('div', { key: 'card', style: styles.card },
               FIELDS.map((field, index) => {
                 const value = values[field.key] ?? DEFAULTS[field.key]
-                const control = field.type === 'boolean'
+                const isOn = field.type === 'sound' ? String(value ?? '') !== '' : value === true
+                const control = (field.type === 'boolean' || field.type === 'sound')
                   ? h('input', {
                     type: 'checkbox',
-                    checked: value === true,
+                    checked: isOn,
                     disabled: busy,
-                    onChange: (event) => commit(field.key, event.target.checked),
+                    onChange: (event) => commit(field.key, field.type === 'sound' ? (event.target.checked ? 'default' : '') : event.target.checked),
                     style: { width: 18, height: 18, margin: 0, cursor: busy ? 'default' : 'pointer' },
                   })
                   : h('input', {
